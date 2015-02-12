@@ -1,5 +1,6 @@
 package com.example.jordan.sunshine;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,15 +95,14 @@ public class ForecastFragment extends Fragment {
         ListView weatherListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         weatherListView.setAdapter(mForecastAdapter);
 
-<<<<<<< HEAD
-//        show toast message when forecast item is touched
-=======
->>>>>>> origin/lesson3-activities-intents
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String forecast = mForecastAdapter.getItem(position);
-                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(detailIntent);
             }
         });
 
