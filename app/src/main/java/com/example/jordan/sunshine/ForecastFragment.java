@@ -11,8 +11,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +40,7 @@ public class ForecastFragment extends Fragment {
     private final String LOG_TAG = ForecastFragment.class.getSimpleName();
     private final String DEFAULT_WEATHER_POSTAL = "92691";
 
-    ArrayAdapter mForecastAdapter;
+    ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -76,15 +78,15 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         String[] fakeWeatherArray = {};
 
 //            String forecastJson = requestForecast();
 //            fakeWeatherArray[0] = forecastJson;
 
-        List<String> weatherForecast = new ArrayList<String>(Arrays.asList(fakeWeatherArray));
+        final List<String> weatherForecast = new ArrayList<String>(Arrays.asList(fakeWeatherArray));
 
-        mForecastAdapter = new ArrayAdapter(
+        mForecastAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
@@ -92,6 +94,14 @@ public class ForecastFragment extends Fragment {
 
         ListView weatherListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         weatherListView.setAdapter(mForecastAdapter);
+
+        weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String forecast = mForecastAdapter.getItem(position);
+                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         FetchWeatherTask weatherTask = new FetchWeatherTask();
         weatherTask.execute(DEFAULT_WEATHER_POSTAL);
