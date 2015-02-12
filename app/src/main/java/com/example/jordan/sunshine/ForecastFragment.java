@@ -95,7 +95,10 @@ public class ForecastFragment extends Fragment {
         ListView weatherListView = (ListView)rootView.findViewById(R.id.listview_forecast);
         weatherListView.setAdapter(mForecastAdapter);
 
+<<<<<<< HEAD
 //        show toast message when forecast item is touched
+=======
+>>>>>>> origin/lesson3-activities-intents
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
