@@ -1,9 +1,11 @@
 package com.example.jordan.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,8 +66,13 @@ public class ForecastFragment extends Fragment {
         if (id == R.id.action_refresh) {
             Log.d(LOG_TAG, "manually refreshing weather");
 
+            //      get postal code from SharedPreferences
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String weatherPostal = settings.getString("location", "00000");
+
+//        fetch weather forecast with async task request to API
             FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute(DEFAULT_WEATHER_POSTAL);
+            weatherTask.execute(weatherPostal);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -106,8 +113,13 @@ public class ForecastFragment extends Fragment {
             }
         });
 
+//      get postal code from SharedPreferences
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String weatherPostal = settings.getString("location", "00000");
+
+//        fetch weather forecast with async task request to API
         FetchWeatherTask weatherTask = new FetchWeatherTask();
-        weatherTask.execute(DEFAULT_WEATHER_POSTAL);
+        weatherTask.execute(weatherPostal);
 
         return rootView;
     }
@@ -152,6 +164,8 @@ public class ForecastFragment extends Fragment {
                 return null;
             }
             String postalCode = params[0];
+
+            Log.d(LOG_TAG, "Requesting weather for postal code: "+postalCode);
 
             try {
                 // Construct the URL for the OpenWeatherMap query
