@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="tempunitentries">
+    <string-array name="pref_units_entries">
         <item>Metric</item>
         <item>Imperial</item>
     </string-array>
-    <string-array name="tempunitentryvalues">
+    <string-array name="pref_units_entry_values">
         <item>metric</item>
         <item>imperial</item>
     </string-array>

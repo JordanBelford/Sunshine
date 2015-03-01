@@ -1,5 +1,8 @@
 package com.example.jordan.sunshine;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -31,6 +34,21 @@ public class SettingsActivity extends PreferenceActivity
         // TODO: Research alternative to deprecated method
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
+
+        Preference showLocationPreference = (Preference) findPreference("show_location");
+        showLocationPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                //      get postal code from SharedPreferences
+//                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
+                String weatherPostal = settings.getString("location", "00000");
+
+                showMap(weatherPostal);
+
+                return true;
+            }
+        });
     }
 
     /**
@@ -56,6 +74,8 @@ public class SettingsActivity extends PreferenceActivity
 
 //        Log.d(LOG_TAG, "Preference: " + preference.getTitle() + ", changed to value: " + stringValue);
 
+// TODO: refresh weather on preference change (or at least whenever returning to weather view)
+
         if (preference instanceof ListPreference) {
             // For list preferences, look up the correct display value in
             // the preference's 'entries' list (since they have separate labels/values).
@@ -68,6 +88,21 @@ public class SettingsActivity extends PreferenceActivity
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
         }
+        return true;
+    }
+
+    private boolean showMap(String postalCode) {
+        //create Uri with postalCode
+        Uri geoLocation = Uri.parse("geo:0,0?q="+postalCode);
+
+        //open map if activity resolves
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geoLocation);
+        if(intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+
+
         return true;
     }
 

@@ -18,6 +18,12 @@
     <!--Default postal code for location preference -->
     <string name="pref_location_default" translatable="false">92691</string>
 
+    <!--Title for button to show location on a map-->
+    <string name="action_show_location_title">Show Location on Map</string>
+
+    <!--Key for button to show location on a map-->
+    <string name="action_show_location_key">show_location</string>
+
 
     <!--Key name for storing units in SharedPreferences-->
     <string name="pref_units_key" translatable="false">units</string>
