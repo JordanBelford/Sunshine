@@ -66,13 +66,15 @@ public class ForecastFragment extends Fragment {
         if (id == R.id.action_refresh) {
             Log.d(LOG_TAG, "manually refreshing weather");
 
+            //TODO reduce code duplicated here and in onCreateView
             //      get postal code from SharedPreferences
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String weatherPostal = settings.getString("location", "00000");
+            String temperatureUnits = settings.getString("units", "metric");
 
 //        fetch weather forecast with async task request to API
             FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute(weatherPostal);
+            weatherTask.execute(weatherPostal, temperatureUnits);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -116,10 +118,11 @@ public class ForecastFragment extends Fragment {
 //      get postal code from SharedPreferences
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String weatherPostal = settings.getString("location", "00000");
+        String temperatureUnits = settings.getString("units", "metric");
 
 //        fetch weather forecast with async task request to API
         FetchWeatherTask weatherTask = new FetchWeatherTask();
-        weatherTask.execute(weatherPostal);
+        weatherTask.execute(weatherPostal, temperatureUnits);
 
         return rootView;
     }
@@ -157,15 +160,17 @@ public class ForecastFragment extends Fragment {
 
             String postalValue = "00000";
             String modeValue = "json";
-            String unitsValue = "imperial"; //e.g. 'metric', 'imperial'
+            String unitsValue = "metric"; //e.g. 'metric', 'imperial' //used for server request, not for displaying to user
             int numDaysValue = 7;
 
             if(params.length == 0) {
                 return null;
             }
             String postalCode = params[0];
+            String temperatureUnits = params[1]; //used for displaying returned data, not same as unitsValue for server request
 
             Log.d(LOG_TAG, "Requesting weather for postal code: "+postalCode);
+            Log.d(LOG_TAG, "Temperature Units set to: "+temperatureUnits);
 
             try {
                 // Construct the URL for the OpenWeatherMap query
@@ -232,7 +237,7 @@ public class ForecastFragment extends Fragment {
             }
 //            Log.d(LOG_TAG, forecastJsonStr);
             try {
-                return getWeatherDataFromJson(forecastJsonStr, numDaysValue);
+                return getWeatherDataFromJson(forecastJsonStr, numDaysValue, temperatureUnits);
             }
             catch (JSONException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -254,7 +259,16 @@ public class ForecastFragment extends Fragment {
         /**
          * Prepare the weather high/lows for presentation.
          */
-        private String formatHighLows(double high, double low) {
+        private String formatHighLows(double high, double low, String units) {
+            // convert to imperial if units variable is "imperial"
+            //assuming temperature values passed in from "high" and "low" are in metric
+//            Log.d(LOG_TAG, "Units for formatting are: "+units);
+            if(units.equals("imperial")) {
+//                Log.d(LOG_TAG, "Formatting temperature from metric to imperial");
+                high = convertMetricToImperial(high);
+                low = convertMetricToImperial(low);
+            }
+
             // For presentation, assume the user doesn't care about tenths of a degree.
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
@@ -264,13 +278,21 @@ public class ForecastFragment extends Fragment {
         }
 
         /**
+         * Convert double from metric to imperial temperature
+         */
+        private double convertMetricToImperial(double metricTemperature) {
+            double imperialTemp = (metricTemperature*1.8)+32;
+            return imperialTemp;
+        }
+
+        /**
          * Take the String representing the complete forecast in JSON Format and
          * pull out the data we need to construct the Strings needed for the wireframes.
          *
          * Fortunately parsing is easy:  constructor takes the JSON string and converts it
          * into an Object hierarchy for us.
          */
-        private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+        private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays, String units)
                 throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
@@ -311,7 +333,7 @@ public class ForecastFragment extends Fragment {
                 double high = temperatureObject.getDouble(OWM_MAX);
                 double low = temperatureObject.getDouble(OWM_MIN);
 
-                highAndLow = formatHighLows(high, low);
+                highAndLow = formatHighLows(high, low, units);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 

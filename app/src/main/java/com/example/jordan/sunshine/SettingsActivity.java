@@ -17,6 +17,8 @@ import android.preference.PreferenceManager;
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
+    private final String LOG_TAG = SettingsActivity.class.getSimpleName();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +30,7 @@ public class SettingsActivity extends PreferenceActivity
         // updated when the preference changes.
         // TODO: Research alternative to deprecated method
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
     }
 
     /**
@@ -50,6 +53,8 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
         String stringValue = value.toString();
+
+//        Log.d(LOG_TAG, "Preference: " + preference.getTitle() + ", changed to value: " + stringValue);
 
         if (preference instanceof ListPreference) {
             // For list preferences, look up the correct display value in

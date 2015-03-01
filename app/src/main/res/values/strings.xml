@@ -18,4 +18,15 @@
     <!--Default postal code for location preference -->
     <string name="pref_location_default" translatable="false">92691</string>
 
+
+    <!--Key name for storing units in SharedPreferences-->
+    <string name="pref_units_key" translatable="false">units</string>
+
+    <!--Summary for Units Setting-->
+    <string name="pref_units_summary">Units to use for displaying temperature</string>
+
+    <!--Title for Units Setting-->
+    <string name="pref_units_title">Temperature Units</string>
+
+
 </resources>
