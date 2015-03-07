@@ -31,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
+//TODO move show location on map button from settings to action menu
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
