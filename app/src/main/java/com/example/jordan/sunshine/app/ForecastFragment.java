@@ -1,4 +1,4 @@
-package com.example.jordan.sunshine;
+package com.example.jordan.sunshine.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.example.jordan.sunshine.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
