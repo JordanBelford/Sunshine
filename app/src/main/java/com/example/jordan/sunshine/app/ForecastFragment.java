@@ -139,8 +139,13 @@ public class ForecastFragment extends Fragment {
         protected void onPostExecute(String[] strings) {
             super.onPostExecute(strings);
 //            Log.d(LOG_TAG, "Kickass! "+Arrays.toString(strings));
-            mForecastAdapter.clear();
-            mForecastAdapter.addAll(strings);
+            if(strings != null) {
+                mForecastAdapter.clear();
+                mForecastAdapter.addAll(strings);
+            }
+            else {
+                Log.d(LOG_TAG, "No weather data returned from async task. Expected if device is offline");
+            }
         }
 
         @Override
