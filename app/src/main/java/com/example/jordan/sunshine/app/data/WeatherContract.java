@@ -52,7 +52,6 @@ public class WeatherContract {
 
         //precise latitude to show on map
         public static final String COLUMN_COORD_LAT = "coord_lat";
-
     }
 
     /* Inner class that defines the table contents of the weather table */
