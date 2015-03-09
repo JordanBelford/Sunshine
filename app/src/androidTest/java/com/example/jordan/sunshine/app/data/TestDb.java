@@ -15,6 +15,7 @@
  */
 package com.example.jordan.sunshine.app.data;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
@@ -112,21 +113,55 @@ public class TestDb extends AndroidTestCase {
     */
     public void testLocationTable() {
         // First step: Get reference to writable database
+        SQLiteDatabase db = new WeatherDbHelper(
+                this.mContext).getWritableDatabase();
+
+        assertTrue(db.isOpen());
+        assertFalse(db.isReadOnly());
 
         // Create ContentValues of what you want to insert
         // (you can use the createNorthPoleLocationValues if you wish)
+        ContentValues locationValues = TestUtilities.createNorthPoleLocationValues();
+
+        assertNotNull(locationValues);
 
         // Insert ContentValues into database and get a row ID back
+//        long northPoleRowId = TestUtilities.insertNorthPoleLocationValues(mContext);
+        long rowId = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, locationValues);
+        assertNotNull("ERROR: database insert returned null instead of row id", rowId);
+        assertTrue("ERROR: failed to insert row to db", rowId >= 0);
 
         // Query the database and receive a Cursor back
+//        Cursor cursor = db.query(WeatherContract.LocationEntry.TABLE_NAME, null, "? == ?",
+//                new String[]{WeatherContract.LocationEntry._ID,
+//                Long.toString(rowId)},
+//                null, null, null);
+////        Cursor cursor = db.query(WeatherContract.LocationEntry.TABLE_NAME, null, null, null, null, null, null);
+//        Cursor cursor = db.query(WeatherContract.LocationEntry.TABLE_NAME, null, "_id == ?",
+//                new String[]{Long.toString(rowId)},
+//                null, null, null);
+        Cursor cursor = db.query(WeatherContract.LocationEntry.TABLE_NAME, null,
+                WeatherContract.LocationEntry._ID + "=" + Long.toString(rowId),
+                null,
+                null, null, null);
+        assertNotNull(cursor);
+        assertTrue("ERROR: Cursor has no rows", cursor.getCount() > 0);
 
         // Move the cursor to a valid database row
+        cursor.moveToFirst();
 
         // Validate data in resulting Cursor with the original ContentValues
         // (you can use the validateCurrentRecord function in TestUtilities to validate the
         // query if you like)
+        TestUtilities.validateCurrentRecord("ERROR: failed to validate north pole location record",
+                cursor, locationValues);
 
         // Finally, close the cursor and database
+        cursor.close();
+        assertTrue(cursor.isClosed());
+
+        db.close();
+        assertFalse(db.isOpen());
 
     }
 
