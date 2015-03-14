@@ -261,10 +261,12 @@ public class ForecastFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try {
-                forecastJsonStr = response.body().string();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(response != null) {
+                try {
+                    forecastJsonStr = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
 //            Log.d(LOG_TAG, forecastJsonStr);
@@ -361,7 +363,9 @@ public class ForecastFragment extends Fragment {
                         final String WG_CONDITIONS = "conditions";
                         final String WG_UNITS = "celsius";
 
-
+            if (forecastJsonStr == null) {
+                return null;
+            }
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
             JSONArray weatherArray = forecastJson.getJSONObject(WG_FORECAST)
                     .getJSONObject(WG_SIMPLEFORECAST)
