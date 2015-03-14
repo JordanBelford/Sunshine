@@ -18,7 +18,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.jordan.sunshine.R;
+import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,10 +29,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,8 +151,7 @@ public class ForecastFragment extends Fragment {
         protected String[] doInBackground(String... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            OkHttpClient client = new OkHttpClient();
+//            HttpURLConnection urlConnection = null;
 
             BufferedReader reader = null;
 
@@ -181,75 +179,95 @@ public class ForecastFragment extends Fragment {
             Log.d(LOG_TAG, "Requesting weather for postal code: "+postalCode);
             Log.d(LOG_TAG, "Temperature Units set to: "+temperatureUnits);
 
-            try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are available at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-//                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=92691&mode=json&units=metric&cnt=7");
-//                with api key c9887fff70db5bf061e562c16eee8176
-//                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?APPID=c9887fff70db5bf061e562c16eee8176&q=92691&mode=json&units=metric&cnt=7");
-
-//                dc534866b650a376
+//            try {
+//                // Construct the URL for the OpenWeatherMap query
+//                // Possible parameters are available at OWM's forecast API page, at
+//                // http://openweathermap.org/API#forecast
+////                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=92691&mode=json&units=metric&cnt=7");
+////                with api key c9887fff70db5bf061e562c16eee8176
+////                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?APPID=c9887fff70db5bf061e562c16eee8176&q=92691&mode=json&units=metric&cnt=7");
 //
-//                Uri.Builder builder = new Uri.Builder();
-//                builder.scheme("http")
-//                        .authority(weatherAuthority)
-//                        .appendEncodedPath(weatherUriPrefix)
-//                        .appendQueryParameter(postalKey, postalCode)
-//                        .appendQueryParameter(modeKey, modeValue)
-//                        .appendQueryParameter(unitsKey, unitsValue)
-//                        .appendQueryParameter(numDaysKey, Integer.toString(numDaysValue));
+////                dc534866b650a376
+////
+////                Uri.Builder builder = new Uri.Builder();
+////                builder.scheme("http")
+////                        .authority(weatherAuthority)
+////                        .appendEncodedPath(weatherUriPrefix)
+////                        .appendQueryParameter(postalKey, postalCode)
+////                        .appendQueryParameter(modeKey, modeValue)
+////                        .appendQueryParameter(unitsKey, unitsValue)
+////                        .appendQueryParameter(numDaysKey, Integer.toString(numDaysValue));
+//
+////                String urlString = builder.build().toString();
+//                String urlString = "http://api.wunderground.com/api/dc534866b650a376/forecast10day/q/CA/Mission_Viejo.json";
+////                Log.d(LOG_TAG, "url: "+urlString);
+//                URL url = new URL(urlString);
+//
+//                // Create the request to OpenWeatherMap, and open the connection
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                urlConnection.setRequestMethod("GET");
+//                urlConnection.connect();
+//
+//                // Read the input stream into a String
+//                InputStream inputStream = urlConnection.getInputStream();
+//                StringBuffer buffer = new StringBuffer();
+//                if (inputStream == null) {
+//                    // Nothing to do.
+//                    return null;
+//                }
+//                reader = new BufferedReader(new InputStreamReader(inputStream));
+//
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+//                    // But it does make debugging a *lot* easier if you print out the completed
+//                    // buffer for debugging.
+//                    buffer.append(line + "\n");
+//                }
+//
+//                if (buffer.length() == 0) {
+//                    // Stream was empty.  No point in parsing.
+//                    forecastJsonStr = null;
+//                }
+//                forecastJsonStr = buffer.toString();
+//            } catch (IOException e) {
+//                Log.e(LOG_TAG, "Error ", e);
+//                // If the code didn't successfully get the weather data, there's no point in attempting
+//                // to parse it.
+//                return null;
+//            } finally {
+//                if (urlConnection != null) {
+//                    urlConnection.disconnect();
+//                }
+//                if (reader != null) {
+//                    try {
+//                        reader.close();
+//                    } catch (final IOException e) {
+//                        Log.e(LOG_TAG, "Error closing stream", e);
+//                    }
+//                }
+//            }
 
-//                String urlString = builder.build().toString();
-                String urlString = "http://api.wunderground.com/api/dc534866b650a376/forecast10day/q/CA/Mission_Viejo.json";
-//                Log.d(LOG_TAG, "url: "+urlString);
-                URL url = new URL(urlString);
 
-                // Create the request to OpenWeatherMap, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    forecastJsonStr = null;
-                }
-                forecastJsonStr = buffer.toString();
+            OkHttpClient client = new OkHttpClient();
+            client.networkInterceptors().add(new StethoInterceptor());
+            String weatherUrlString = "http://api.wunderground.com/api/dc534866b650a376/forecast10day/q/CA/Mission_Viejo.json";
+            Request request = new Request.Builder()
+                    .url(weatherUrlString)
+                    .build();
+            Response response = null;
+            try {
+                response = client.newCall(request).execute();
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
+                e.printStackTrace();
             }
-            Log.d(LOG_TAG, forecastJsonStr);
+            try {
+                forecastJsonStr = response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+//            Log.d(LOG_TAG, forecastJsonStr);
             try {
                 return getWeatherDataFromJson(forecastJsonStr, numDaysValue, temperatureUnits);
             }
@@ -259,6 +277,13 @@ public class ForecastFragment extends Fragment {
             return null;
         }
 
+//        String executeWeatherApiRequest(OkHttpClient client, String url) throws IOException {
+//            Request request = new Request.Builder()
+//                    .url(url)
+//                    .build();
+//            Response response = client.newCall(request).execute();
+//            return response.body().toString();
+//        }
         /* The date/time conversion code is going to be moved outside the asynctask later,
  * so for convenience we're breaking it out into its own method now.
  */
@@ -354,7 +379,7 @@ public class ForecastFragment extends Fragment {
                 // Get the JSON object representing the day
                 JSONObject dayForecast = weatherArray.getJSONObject(i);
 
-                Log.d(LOG_TAG, dayForecast.toString());
+//                Log.d(LOG_TAG, dayForecast.toString());
 
                 // The date/time is returned as a long.  We need to convert that
                 // into something human-readable, since most people won't read "1400356800" as
