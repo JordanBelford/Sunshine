@@ -2,7 +2,6 @@ package com.example.jordan.sunshine.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.jordan.sunshine.R;
+import com.squareup.okhttp.OkHttpClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -153,6 +153,8 @@ public class ForecastFragment extends Fragment {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
+            OkHttpClient client = new OkHttpClient();
+
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
@@ -184,17 +186,22 @@ public class ForecastFragment extends Fragment {
                 // Possible parameters are available at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
 //                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=92691&mode=json&units=metric&cnt=7");
+//                with api key c9887fff70db5bf061e562c16eee8176
+//                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?APPID=c9887fff70db5bf061e562c16eee8176&q=92691&mode=json&units=metric&cnt=7");
 
-                Uri.Builder builder = new Uri.Builder();
-                builder.scheme("http")
-                        .authority(weatherAuthority)
-                        .appendEncodedPath(weatherUriPrefix)
-                        .appendQueryParameter(postalKey, postalCode)
-                        .appendQueryParameter(modeKey, modeValue)
-                        .appendQueryParameter(unitsKey, unitsValue)
-                        .appendQueryParameter(numDaysKey, Integer.toString(numDaysValue));
+//                dc534866b650a376
+//
+//                Uri.Builder builder = new Uri.Builder();
+//                builder.scheme("http")
+//                        .authority(weatherAuthority)
+//                        .appendEncodedPath(weatherUriPrefix)
+//                        .appendQueryParameter(postalKey, postalCode)
+//                        .appendQueryParameter(modeKey, modeValue)
+//                        .appendQueryParameter(unitsKey, unitsValue)
+//                        .appendQueryParameter(numDaysKey, Integer.toString(numDaysValue));
 
-                String urlString = builder.build().toString();
+//                String urlString = builder.build().toString();
+                String urlString = "http://api.wunderground.com/api/dc534866b650a376/forecast10day/q/CA/Mission_Viejo.json";
 //                Log.d(LOG_TAG, "url: "+urlString);
                 URL url = new URL(urlString);
 
@@ -242,7 +249,7 @@ public class ForecastFragment extends Fragment {
                     }
                 }
             }
-//            Log.d(LOG_TAG, forecastJsonStr);
+            Log.d(LOG_TAG, forecastJsonStr);
             try {
                 return getWeatherDataFromJson(forecastJsonStr, numDaysValue, temperatureUnits);
             }
@@ -303,19 +310,42 @@ public class ForecastFragment extends Fragment {
                 throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
-            final String OWM_LIST = "list";
-            final String OWM_WEATHER = "weather";
-            final String OWM_TEMPERATURE = "temp";
-            final String OWM_MAX = "max";
-            final String OWM_MIN = "min";
-            final String OWM_DATETIME = "dt";
-            final String OWM_DESCRIPTION = "main";
+//            final String OWM_LIST = "list";
+//            final String OWM_WEATHER = "weather";
+//            final String OWM_TEMPERATURE = "temp";
+//            final String OWM_MAX = "max";
+//            final String OWM_MIN = "min";
+//            final String OWM_DATETIME = "dt";
+//            final String OWM_DESCRIPTION = "main";
+
+//            forecast -> simpleforecaset -> forecastday(array) ->
+//            forecastday
+//                date  -> epoch
+//                period (1 - 10)
+//                high -> celsius
+//                low -> celsius
+//                conditions
+//
+            final String WG_FORECAST = "forecast";
+                final String WG_SIMPLEFORECAST = "simpleforecast";
+                    final String WG_FORECASTDAY = "forecastday"; //array
+                        final String WG_DATE = "date";
+                            final String WG_EPOCH = "epoch";
+                        final String WG_HIGH = "high";
+                        final String WG_LOW = "low";
+                        final String WG_CONDITIONS = "conditions";
+                        final String WG_UNITS = "celsius";
+
 
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
-            JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
+            JSONArray weatherArray = forecastJson.getJSONObject(WG_FORECAST)
+                    .getJSONObject(WG_SIMPLEFORECAST)
+                    .getJSONArray(WG_FORECASTDAY);
 
             String[] resultStrs = new String[numDays];
-            for(int i = 0; i < weatherArray.length(); i++) {
+            int numDaysAvailable = Math.min(numDays, weatherArray.length());
+            for(int i = 0; i < numDaysAvailable; i++) {
+
                 // For now, using the format "Day, description, hi/low"
                 String day;
                 String description;
@@ -324,21 +354,18 @@ public class ForecastFragment extends Fragment {
                 // Get the JSON object representing the day
                 JSONObject dayForecast = weatherArray.getJSONObject(i);
 
+                Log.d(LOG_TAG, dayForecast.toString());
+
                 // The date/time is returned as a long.  We need to convert that
                 // into something human-readable, since most people won't read "1400356800" as
                 // "this saturday".
-                long dateTime = dayForecast.getLong(OWM_DATETIME);
+                long dateTime = dayForecast.getJSONObject(WG_DATE).getLong(WG_EPOCH);
                 day = getReadableDateString(dateTime);
 
-                // description is in a child array called "weather", which is 1 element long.
-                JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-                description = weatherObject.getString(OWM_DESCRIPTION);
+                description = dayForecast.getString(WG_CONDITIONS);
 
-                // Temperatures are in a child object called "temp".  Try not to name variables
-                // "temp" when working with temperature.  It confuses everybody.
-                JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
-                double high = temperatureObject.getDouble(OWM_MAX);
-                double low = temperatureObject.getDouble(OWM_MIN);
+                double high = dayForecast.getJSONObject(WG_HIGH).getDouble(WG_UNITS);
+                double low = dayForecast.getJSONObject(WG_LOW).getDouble(WG_UNITS);
 
                 highAndLow = formatHighLows(high, low, units);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
