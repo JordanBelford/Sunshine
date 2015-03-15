@@ -27,7 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,13 +34,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by jordan on 1/28/15.
- */
+
 public class ForecastFragment extends Fragment {
 
     private final String LOG_TAG = ForecastFragment.class.getSimpleName();
-    private final String DEFAULT_WEATHER_POSTAL = "92691";
+//    private final String DEFAULT_WEATHER_POSTAL = "92691";
 
     ArrayAdapter<String> mForecastAdapter;
 
@@ -94,9 +91,9 @@ public class ForecastFragment extends Fragment {
 //            String forecastJson = requestForecast();
 //            fakeWeatherArray[0] = forecastJson;
 
-        final List<String> weatherForecast = new ArrayList<String>(Arrays.asList(fakeWeatherArray));
+        final List<String> weatherForecast = new ArrayList<>(Arrays.asList(fakeWeatherArray));
 
-        mForecastAdapter = new ArrayAdapter<String>(
+        mForecastAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
@@ -153,21 +150,21 @@ public class ForecastFragment extends Fragment {
             // so that they can be closed in the finally block.
 //            HttpURLConnection urlConnection = null;
 
-            BufferedReader reader = null;
+//            BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
             String forecastJsonStr = null;
 
-            final String weatherAuthority = "api.openweathermap.org";
-            final String weatherUriPrefix = "data/2.5/forecast/daily";
-            final String postalKey = "q";
-            final String modeKey = "mode"; //e.g. 'json', 'xml'
-            final String unitsKey = "units";
-            final String numDaysKey = "cnt";
+//            final String weatherAuthority = "api.openweathermap.org";
+//            final String weatherUriPrefix = "data/2.5/forecast/daily";
+//            final String postalKey = "q";
+//            final String modeKey = "mode"; //e.g. 'json', 'xml'
+//            final String unitsKey = "units";
+//            final String numDaysKey = "cnt";
 
-            String postalValue = "00000";
-            String modeValue = "json";
-            String unitsValue = "metric"; //e.g. 'metric', 'imperial' //used for server request, not for displaying to user
+//            String postalValue = "00000";
+//            String modeValue = "json";
+//            String unitsValue = "metric"; //e.g. 'metric', 'imperial' //used for server request, not for displaying to user
             int numDaysValue = 7;
 
             if(params.length == 0) {
@@ -179,6 +176,7 @@ public class ForecastFragment extends Fragment {
             Log.d(LOG_TAG, "Requesting weather for postal code: "+postalCode);
             Log.d(LOG_TAG, "Temperature Units set to: "+temperatureUnits);
 
+            //TODO move below to another function, and give two API's to choose from.
 //            try {
 //                // Construct the URL for the OpenWeatherMap query
 //                // Possible parameters are available at OWM's forecast API page, at
@@ -287,7 +285,7 @@ public class ForecastFragment extends Fragment {
             // it must be converted to milliseconds in order to be converted to valid date.
             Date date = new Date(time * 1000);
             SimpleDateFormat format = new SimpleDateFormat("E, MMM d");
-            return format.format(date).toString();
+            return format.format(date);
         }
 
         /**
@@ -307,16 +305,14 @@ public class ForecastFragment extends Fragment {
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
 
-            String highLowStr = roundedHigh + "/" + roundedLow;
-            return highLowStr;
+            return roundedHigh + "/" + roundedLow;
         }
 
         /**
          * Convert double from metric to imperial temperature
          */
         private double convertMetricToImperial(double metricTemperature) {
-            double imperialTemp = (metricTemperature*1.8)+32;
-            return imperialTemp;
+            return (metricTemperature*1.8)+32;
         }
 
         /**
