@@ -251,7 +251,7 @@ public class ForecastFragment extends Fragment {
 
             OkHttpClient client = new OkHttpClient();
             client.networkInterceptors().add(new StethoInterceptor());
-            String weatherUrlString = "http://api.wunderground.com/api/dc534866b650a376/forecast10day/q/CA/Mission_Viejo.json";
+            String weatherUrlString = "http://api.wunderground.com/api/dc534866b650a376/forecast10day/q/" + postalCode + ".json";
             Request request = new Request.Builder()
                     .url(weatherUrlString)
                     .build();
@@ -279,13 +279,6 @@ public class ForecastFragment extends Fragment {
             return null;
         }
 
-//        String executeWeatherApiRequest(OkHttpClient client, String url) throws IOException {
-//            Request request = new Request.Builder()
-//                    .url(url)
-//                    .build();
-//            Response response = client.newCall(request).execute();
-//            return response.body().toString();
-//        }
         /* The date/time conversion code is going to be moved outside the asynctask later,
  * so for convenience we're breaking it out into its own method now.
  */
@@ -336,23 +329,6 @@ public class ForecastFragment extends Fragment {
         private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays, String units)
                 throws JSONException {
 
-            // These are the names of the JSON objects that need to be extracted.
-//            final String OWM_LIST = "list";
-//            final String OWM_WEATHER = "weather";
-//            final String OWM_TEMPERATURE = "temp";
-//            final String OWM_MAX = "max";
-//            final String OWM_MIN = "min";
-//            final String OWM_DATETIME = "dt";
-//            final String OWM_DESCRIPTION = "main";
-
-//            forecast -> simpleforecaset -> forecastday(array) ->
-//            forecastday
-//                date  -> epoch
-//                period (1 - 10)
-//                high -> celsius
-//                low -> celsius
-//                conditions
-//
             final String WG_FORECAST = "forecast";
                 final String WG_SIMPLEFORECAST = "simpleforecast";
                     final String WG_FORECASTDAY = "forecastday"; //array
@@ -391,6 +367,7 @@ public class ForecastFragment extends Fragment {
                 long dateTime = dayForecast.getJSONObject(WG_DATE).getLong(WG_EPOCH);
                 day = getReadableDateString(dateTime);
 
+                //get the weather description, such as "Clear" or "Hail"
                 description = dayForecast.getString(WG_CONDITIONS);
 
                 double high = dayForecast.getJSONObject(WG_HIGH).getDouble(WG_UNITS);
