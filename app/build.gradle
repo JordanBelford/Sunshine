@@ -25,4 +25,25 @@ dependencies {
     compile 'com.facebook.stetho:stetho:1.0.1'
     compile 'com.facebook.stetho:stetho-okhttp:1.0.1'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
+    compile 'io.reactivex:rxandroid:0.24.0'
 }
+
+//begin section for retrolambda
+//https://github.com/evant/gradle-retrolambda
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:2.5.0'
+    }
+}
+
+// Required because retrolambda is on maven central
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'me.tatarka.retrolambda'
+//end retrolambda section
