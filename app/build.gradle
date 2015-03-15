@@ -4,6 +4,12 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
+    //version 8 compatibility included here for retrolambda
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.example.jordan.sunshine"
         minSdkVersion 15
