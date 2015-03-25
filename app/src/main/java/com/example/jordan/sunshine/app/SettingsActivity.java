@@ -44,8 +44,9 @@ public class SettingsActivity extends PreferenceActivity
                 //      get postal code from SharedPreferences
 //                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
-                String weatherPostal = settings.getString("location", "00000");
+//                String weatherPostal = settings.getString("location", "00000");
 
+                String weatherPostal = Utility.getPreferredLocation(SettingsActivity.this);
                 showMap(weatherPostal);
 
                 return true;
