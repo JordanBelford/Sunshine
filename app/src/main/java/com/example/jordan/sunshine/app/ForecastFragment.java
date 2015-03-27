@@ -177,6 +177,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(LOG_TAG, "Forecast Cursor count: "+cursor.getCount());
         mForecastAdapter.swapCursor(cursor);
     }
 
