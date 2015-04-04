@@ -1,7 +1,6 @@
 package com.example.jordan.sunshine.app;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -43,7 +42,7 @@ public class SettingsActivity extends PreferenceActivity
             public boolean onPreferenceClick(Preference preference) {
                 //      get postal code from SharedPreferences
 //                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
+//                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
 //                String weatherPostal = settings.getString("location", "00000");
 
                 String weatherPostal = Utility.getPreferredLocation(SettingsActivity.this);

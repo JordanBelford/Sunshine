@@ -37,7 +37,9 @@
         </activity>
         <provider
             android:authorities="com.jordan.android.sunshine.app"
-            android:name=".app.data.WeatherProvider" />
+            android:name=".app.data.WeatherProvider"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

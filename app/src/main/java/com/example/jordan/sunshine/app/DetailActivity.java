@@ -58,7 +58,7 @@ public class DetailActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Log.d(LOG_TAG, "opening settings from DetailActivity");
+//            Log.d(LOG_TAG, "opening settings from DetailActivity");
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
@@ -181,7 +181,7 @@ public class DetailActivity extends ActionBarActivity {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
 
             } else {
-                Log.d(LOG_TAG, "mForecast is null");
+                Log.d(LOG_TAG, "mShareActionProvider is null");
             }
         }
 
