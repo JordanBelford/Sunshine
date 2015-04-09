@@ -192,7 +192,7 @@ public class DetailActivity extends ActionBarActivity {
 
         private String formatHighLows(double high, double low) {
             boolean isMetric = Utility.isMetric(getActivity());
-            return Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric);
+            return Utility.formatTemperature(getActivity(), high, isMetric) + "/" + Utility.formatTemperature(getActivity(), low, isMetric);
         }
 
         /*
