@@ -185,7 +185,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             // read humidity from cursor and update view
             float humidity = cursor.getFloat(COL_WEATHER_HUMIDITY);
 //            mHumidityView.setText("Humidity: {humidity} %%");
-            mHumidityView.setText("Humidity: " + humidity + " %");
+            mHumidityView.setText(getActivity().getString(R.string.format_humidity, humidity));
 
             // read wind speed from cursor and update view
             float windSpeed = cursor.getFloat(COL_WEATHER_WIND_SPEED);
@@ -195,7 +195,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             // read pressure from cursor and update view
             float pressure = cursor.getFloat(COL_WEATHER_PRESSURE);
 //            mPressureView.setText("Pressure: {pressure} hPa");
-            mPressureView.setText("Pressure: " + pressure + " hPa");
+            mPressureView.setText(getActivity().getString(R.string.format_pressure, pressure));
 
             // forecast string for share intent
             mForecast = String.format("%s - %s - %s/%s", dateText, description, highString, lowString);
