@@ -2,6 +2,7 @@ package com.example.jordan.sunshine.app;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,12 +27,14 @@ import com.example.jordan.sunshine.app.data.WeatherContract;
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+    static final String DETAIL_URI = "URI";
     private static final int DETAIL_LOADER_ID = 0;
 
     private ShareActionProvider mShareActionProvider;
     private static String FORECAST_SHARE_HASHTAG = " #SUNSHINE";
 
     private String mForecast;
+    private Uri mUri;
 
     private ImageView mIconView;
     private TextView mDateView;
@@ -89,6 +92,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
         mDateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
@@ -132,24 +141,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        switch(i) {
-            case DETAIL_LOADER_ID:
-                Intent intent = getActivity().getIntent();
-                if(intent == null || intent.getData() == null) {
-                    return null;
-                }
-
-                return new CursorLoader(
-                        getActivity(),
-                        intent.getData(),
-                        FORECAST_COLUMNS,
-                        null,
-                        null,
-                        null
-                );
-            default:
-                return null;
+        if(null != mUri) {
+            return new CursorLoader(
+                    getActivity(),
+                    mUri,
+                    FORECAST_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
         }
+        return null;
     }
 
     @Override
@@ -211,6 +213,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
+    }
+
+    void onLocationChanged( String newLocation ) {
+        // replace the uri, since the location has changed
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(DETAIL_LOADER_ID, null, this);
+        }
     }
 
     private String formatHighLows(double high, double low) {
