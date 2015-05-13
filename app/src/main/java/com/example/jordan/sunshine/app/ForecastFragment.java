@@ -33,6 +33,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     ForecastAdapter mForecastAdapter;
     private int mPosition = ListView.INVALID_POSITION;
     private ListView mWeatherListView;
+    private boolean mUseTodayLayout;
 
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -138,7 +139,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mWeatherListView = (ListView)rootView.findViewById(R.id.listview_forecast);
+        mWeatherListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mWeatherListView.setAdapter(mForecastAdapter);
 
         mWeatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -210,7 +211,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mForecastAdapter.swapCursor(cursor);
-        if(mPosition != ListView.INVALID_POSITION) {
+        if (mPosition != ListView.INVALID_POSITION) {
             mWeatherListView.smoothScrollToPosition(mPosition);
         }
     }
@@ -220,5 +221,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.swapCursor(null);
     }
 
-
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+        }
+    }
 }

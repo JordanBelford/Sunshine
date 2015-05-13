@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             mTwoPane = false;
         }
         ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-        ff.mForecastAdapter.setUseTodayLayout(!mTwoPane);
+        ff.setUseTodayLayout(!mTwoPane);
     }
 
 
