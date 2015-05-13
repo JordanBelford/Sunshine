@@ -29,6 +29,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
             mTwoPane = true;
 
+
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
@@ -39,6 +40,8 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         else {
             mTwoPane = false;
         }
+        ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+        ff.mForecastAdapter.setUseTodayLayout(!mTwoPane);
     }
 
 
